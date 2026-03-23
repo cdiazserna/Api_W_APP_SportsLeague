@@ -34,11 +34,14 @@ namespace SportsLeague.Domain.Services
         public async Task<Tournament?> GetByIdAsync(int id)
         {
             _logger.LogInformation("Retrieving tournament with ID: {TournamentId}", id);
+            
             var tournament = await _tournamentRepository.GetByIdWithTeamsAsync(id);
-
+            
             if (tournament == null)
+            {
                 _logger.LogWarning("Tournament with ID {TournamentId} not found", id);
-
+            }
+                
             return tournament;
         }
 
@@ -62,7 +65,9 @@ namespace SportsLeague.Domain.Services
             var existing = await _tournamentRepository.GetByIdAsync(id);
 
             if (existing == null)
+            {
                 throw new KeyNotFoundException($"No se encontró el torneo con ID {id}");
+            }
 
             if (existing.Status != TournamentStatus.Pending)
             {
@@ -156,7 +161,7 @@ namespace SportsLeague.Domain.Services
 
             // Validar que no esté ya inscrito
             var existing = await _tournamentTeamRepository.GetByTournamentAndTeamAsync(tournamentId, teamId);
-            
+
             if (existing != null)
             {
                 throw new InvalidOperationException(
